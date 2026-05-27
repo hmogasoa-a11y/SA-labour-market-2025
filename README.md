@@ -26,17 +26,6 @@ Full 10-industry breakdown and methodology available in the report PDF.
 
 **Note**: Due to DataFirst licensing restrictions, raw microdata files are not included in this repository.
 
-## Reproducing the Analysis
-To replicate this analysis:
-
-1. **Request the data**: Apply for QLFS 2024 Q4 and 2025 Q4 microdata from DataFirst
-2. **Setup**: Save microdata files to `/data/` as `qlfs_2024_q4.csv` and `qlfs_2025_q4.csv`
-3. **Dependencies**: Install R packages `tidyverse`, `data.table`, `gt`
-4. **Run**: Execute `[your_analysis_file].R` to generate all tables and calculations
-[optional]
-
-The script filters for employed persons `Lfs_Status == 1`, applies Stats SA weights, and calculates YoY changes by industry.
-
 ## Tools Used
 R · tidyverse · data.table · QLFS microdata · DataFirst
 
