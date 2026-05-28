@@ -1,4 +1,4 @@
-
+[q4_2024_vs_q4_2025_industry_yoy.csv](https://github.com/user-attachments/files/28327100/q4_2024_vs_q4_2025_industry_yoy.csv)
 SA Labour Market: Q4 2024 vs Q4 2025 Industry Analysis
 
 Overview
@@ -47,9 +47,25 @@ Gomolemo Bokang Mogasoa
 https://www.linkedin.com/in/gomolemo-mogasoa/
 May 2026
 
+[Uplo"Industry","q4_2024_emp","q4_2025_emp","yoy_abs","yoy_pct","share_2024","share_2025"
+"Transport",1077905,1151328,73423,6.8,6.2,6.7
+"Community & personal services",4026927,4090990,64064,1.6,23.2,23.6
+"Construction",1377225,1437433,60208,4.4,7.9,8.3
+"Agriculture",940905,970263,29357,3.1,5.4,5.6
+"Utilities",110515,133969,23454,21.2,0.6,0.8
+"Finance",3003624,2995630,-7994,-0.3,17.3,17.3
+"Private households",1168712,1147331,-21380,-1.8,6.7,6.6
+"Mining",468621,444544,-24077,-5.1,2.7,2.6
+"Trade",3484089,3361646,-122443,-3.5,20.1,19.4
+"Manufacturing",1708286,1578714,-129571,-7.6,9.8,9.1
+"Total",17366809,17311848,-54959,-0.3,100,100
+ading q4_2024_vs_q4_2025_industry_yoy.csv…]()
+
+
 sa_labour_yoy.R
 # SA Labour: Q4 2024 vs Q4 2025 Industry YoY
 # Author: Gomolemo Bokang Mogasoa
+
 # Purpose: Calculate real YoY employment change by industry, stripping out Q2 2025 weight revision effect
 # Note: QoQ 2025 comparisons invalid due to Stats SA post-Census 2022 weight update. Use YoY only.
 
