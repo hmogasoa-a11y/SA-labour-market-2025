@@ -1,3 +1,4 @@
+
 SA Labour Market: Q4 2024 vs Q4 2025 Industry Analysis
 
 Overview
@@ -45,3 +46,95 @@ Author
 Gomolemo Bokang Mogasoa
 https://www.linkedin.com/in/gomolemo-mogasoa/
 May 2026
+
+sa_labour_yoy.R
+# SA Labour: Q4 2024 vs Q4 2025 Industry YoY
+# Author: Gomolemo Bokang Mogasoa
+# Purpose: Calculate real YoY employment change by industry, stripping out Q2 2025 weight revision effect
+# Note: QoQ 2025 comparisons invalid due to Stats SA post-Census 2022 weight update. Use YoY only.
+
+# ---- 1. SETUP ----
+library(readr)
+library(dplyr)
+
+# ---- 2. LOAD DATA ----
+# Q4 2024: industry names stored as text, employment status in Status column
+q4_2024 <- read_csv("qlfs-2024-q4-worker-v1.csv")
+
+# Q4 2025: industry stored as numeric codes, employment status in Lfs_Status column  
+q4_2025_raw <- read_csv("qlfs-2025-q4-v1.csv")
+
+# ---- 3. HARMONIZE INDUSTRY CODES ----
+# Stats SA changed industry variable between quarters: text in 2024, numeric in 2025
+# Mapping based on QLFS metadata + SIC codes
+indus_map <- data.frame(
+  Indus_text = c("Agriculture; hunting; forestry and fishing",
+                 "Mining and quarrying",
+                 "Manufacturing", 
+                 "Electricity; gas and water supply",
+                 "Construction",
+                 "Wholesale and retail trade",
+                 "Transport; storage and communication",
+                 "Financial intermediation; insurance; real estate and business services",
+                 "Community; social and personal services",
+                 "Private households"),
+  Indus_code = 1:10,
+  Industry = c("Agriculture", "Mining", "Manufacturing", "Utilities",
+               "Construction", "Trade", "Transport", "Finance",
+               "Community & personal services", "Private households")
+)
+
+# ---- 4. CALCULATE Q4 2024 WEIGHTED TOTALS ----
+q4_2024_all <- q4_2024 %>%
+  filter(Status == "Employed", Indus %in% indus_map$Indus_text) %>% # drop invalid/missing
+  left_join(indus_map, by = c("Indus" = "Indus_text")) %>%
+  group_by(Indus_code, Industry) %>%
+  summarise(q4_2024_emp = sum(Weight, na.rm = TRUE), .groups = "drop")
+
+# ---- 5. CALCULATE Q4 2025 WEIGHTED TOTALS ----
+# Lfs_Status == 1 = Employed in 2025 file. Drop Indus == 11 "Other/Unspecified"
+q4_2025_all <- q4_2025_raw %>%
+  filter(Lfs_Status == 1, Indus %in% 1:10) %>%
+  group_by(Indus) %>%
+  summarise(q4_2025_emp = sum(Weight, na.rm = TRUE), .groups = "drop") %>%
+  rename(Indus_code = Indus)
+
+# ---- 6. MERGE + CALCULATE YOY ----
+full_yoy <- indus_map %>%
+  select(Indus_code, Industry) %>%
+  left_join(q4_2024_all %>% select(-Industry), by = "Indus_code") %>%
+  left_join(q4_2025_all, by = "Indus_code") %>%
+  mutate(
+    yoy_abs = q4_2025_emp - q4_2024_emp,
+    yoy_pct = round(yoy_abs / q4_2024_emp * 100, 1)
+  ) %>%
+  select(Industry, q4_2024_emp, q4_2025_emp, yoy_abs, yoy_pct) %>%
+  arrange(desc(yoy_abs))
+
+# ---- 7. ADD TOTALS + SHARES FOR FINAL TABLE ----
+full_yoy_clean <- full_yoy %>%
+  mutate(across(c(q4_2024_emp, q4_2025_emp, yoy_abs), ~round(.x, 0)))
+
+full_yoy_totals <- full_yoy_clean %>%
+  bind_rows(
+    summarise(.,
+              Industry = "Total",
+              q4_2024_emp = sum(q4_2024_emp, na.rm = TRUE),
+              q4_2025_emp = sum(q4_2025_emp, na.rm = TRUE),
+              yoy_abs = sum(yoy_abs, na.rm = TRUE)
+    ) %>%
+      mutate(yoy_pct = round(yoy_abs / q4_2024_emp * 100, 1))
+  ) %>%
+  mutate(
+    share_2024 = round(q4_2024_emp / q4_2024_emp[Industry == "Total"] * 100, 1),
+    share_2025 = round(q4_2025_emp / q4_2025_emp[Industry == "Total"] * 100, 1)
+  )
+
+# ---- 8. EXPORT ----
+print(full_yoy_totals, row.names = FALSE)
+write.csv(full_yoy_totals, "q4_2024_vs_q4_2025_industry_yoy.csv", row.names = FALSE)
+
+# ---- 9. METHOD NOTE ----
+# Weight revision: Stats SA implemented new Census 2022 weights in Q2 2025.
+# This creates a series break. Q1 2025 to Q4 2025 not directly comparable.
+# YoY Q4 2025 vs Q4 2024 uses consistent methodology and is valid.
