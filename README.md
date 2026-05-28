@@ -1,4 +1,5 @@
 [q4_2024_vs_q4_2025_industry_yoy.csv](https://github.com/user-attachments/files/28327100/q4_2024_vs_q4_2025_industry_yoy.csv)
+
 SA Labour Market: Q4 2024 vs Q4 2025 Industry Analysis
 
 Overview
@@ -42,9 +43,10 @@ The script outputs a table with Q4 2024 employment, Q4 2025 employment, absolute
 Why This Matters
 Most public commentary on 2025 employment uses QoQ numbers that are distorted by the weight update. This YoY approach shows real labour market dynamics in key sectors like Construction, Trade, and Community Services.
 
-Author
+Author:
 Gomolemo Bokang Mogasoa
 https://www.linkedin.com/in/gomolemo-mogasoa/
+
 May 2026
 
 [Uplo"Industry","q4_2024_emp","q4_2025_emp","yoy_abs","yoy_pct","share_2024","share_2025"
@@ -62,7 +64,9 @@ May 2026
 ading q4_2024_vs_q4_2025_industry_yoy.csv…]()
 
 
-sa_labour_yoy.R
+
+sa_labour_yoy.R - R Code for replication
+
 # SA Labour: Q4 2024 vs Q4 2025 Industry YoY
 # Author: Gomolemo Bokang Mogasoa
 
